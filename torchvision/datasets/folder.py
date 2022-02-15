@@ -1,8 +1,8 @@
 import os
 import os.path
+import rasterio
+from torchvision.transforms import ToTensor
 from typing import Any, Callable, cast, Dict, List, Optional, Tuple
-
-from PIL import Image
 
 from .vision import VisionDataset
 
@@ -241,11 +241,11 @@ class DatasetFolder(VisionDataset):
 IMG_EXTENSIONS = (".jpg", ".jpeg", ".png", ".ppm", ".bmp", ".pgm", ".tif", ".tiff", ".webp")
 
 
-def pil_loader(path: str) -> Image.Image:
+def pil_loader(path: str):
     # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
-    with open(path, "rb") as f:
-        img = Image.open(f)
-        return img.convert("RGB")
+    image = rasterio.open(path)
+    image = ToTensor()(image)
+    return image
 
 
 # TODO: specify the return type
